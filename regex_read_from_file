@@ -6,7 +6,7 @@ import re
 with open('sample.txt', 'r') as file:
     content = file.read()
 
-#needs work to properly capture reviews this ([\w\W]+reviews:) needs work
+#does not yet capture text, reviews: appended to end of catagories
 pattern = r'Id:   (\d+)\s*ASIN:\s*(\d+)\s*title:\s*([^\n]+)\s*group:\s*([^\n]+)\s*salesrank:\s*(\d+)\s*similar:\s*(\d+)\s*([^\n]+)\s*categories:\s*(\d+)\n   ([\||\w|\[|\]|\s|\&|\,|\-|\(|\)]*): total: (\d)+  downloaded: (\d+)  avg rating: (\d+\.?\d*)'
 
 
