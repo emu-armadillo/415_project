@@ -7,7 +7,7 @@ with open('sample.txt', 'r') as file:
     content = file.read()
 
 #needs work to properly capture reviews this ([\w\W]+reviews:) needs work
-pattern = r'Id:\s*(\d+)\s*ASIN:\s*(\d+)\s*title:\s*([^\n]+)\s*group:\s*([^\n]+)\s*salesrank:\s*(\d+)\s*similar:\s*(\d+)\s*([^\n]+)\s*categories:\s*(\d+)\s*([\w\W]+reviews:) total: (\d+)\s*downloaded: (\d+)  avg rating: (\d+)'
+pattern = r'Id:   (\d+)\s*ASIN:\s*(\d+)\s*title:\s*([^\n]+)\s*group:\s*([^\n]+)\s*salesrank:\s*(\d+)\s*similar:\s*(\d+)\s*([^\n]+)\s*categories:\s*(\d+)\n   ([\||\w|\[|\]|\s|\&|\,|\-|\(|\)]*): total: (\d)+  downloaded: (\d+)  avg rating: (\d+\.?\d*)'
 
 
 
@@ -16,6 +16,6 @@ matches = re.findall(pattern, content)
 print(len(matches))
 for match in matches:
     print(len(match))
-    id,asin,title,group,salesrank,sim_num,sim_list,cat_num,catagories,t_rev,dowloads,avg_rev = match
+    id,asin,title,group,salesrank,sim_num,sim_list,cat_num,catagories,t_rev,downloads,avg_rating = match
     
-    print(f"id: {id}, avg_re: {avg_rev}")
+    print(f"id: {id}, catagories: {catagories}")
