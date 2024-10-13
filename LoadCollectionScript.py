@@ -1,6 +1,6 @@
 #import packages
 from pymongo import MongoClient
-import json
+import gzip
 '''
     to start mongodb server run in bash as admin:
         net start MongoDB
@@ -15,8 +15,12 @@ client = MongoClient("mongodb://localhost:27017/")
 db = client.get_database("AmazonProject")
 collection = db.get_collection("ProductMetaData")
 
-# Drop the collection if it exists
-collection.drop()
+# Check if collection exists and has data before dropping
+if collection.count_documents({}) > 0:
+    print(f"Collection '{collection.name}' has data and will be dropped.\n")
+    collection.drop()
+else:
+    print(f"Collection '{collection.name}' is either empty or doesn't exist. No need to drop it.\n")
 
 
 # Function to parse a single product entry
@@ -76,23 +80,49 @@ def parse_product(lines):
     return product
 
 
-
-# Read the text file and parse the data
-with open('sample.txt', 'r') as file:
+# Reading from a .gz file
+with gzip.open('amazon-meta.txt.gz', 'rt', encoding='utf-8') as file:
     lines = []
     for line in file:
         if line.strip() == '' and lines:  # New product starts
-            product = parse_product(lines)
-            collection.insert_one(product)
-            # print(f'{product}\n')           # for debugging
-            lines = []  # Reset for next product
+            try:
+                product = parse_product(lines)
+                collection.insert_one(product)
+            except Exception as e:
+                print(f"Error processing product: {lines}\n{e}")
+            lines = []  # Reset for the next product
         else:
             lines.append(line)
 
-# Insert the last product if file doesn't end with an empty line
+# Insert the last product if the file doesn't end with an empty line
 if lines:
-    product = parse_product(lines)
-    collection.insert_one(product)
+    try:
+        product = parse_product(lines)
+        collection.insert_one(product)
+    except Exception as e:
+        print(f"Error processing last product: {lines}\n{e}")
+
+
+# Read the text file and parse the data
+# with open('amazon-meta.txt', 'r', encoding='utf-8') as file:
+#     lines = []
+#     # total_lines = sum(1 for _ in file)  # Calculate total number of lines
+#     # file.seek(0)  # Reset file pointer to the beginning
+#     # print(f'Total number of lines in the file: {total_lines}')
+
+#     for line in file:
+#         if line.strip() == '' and lines:  # New product starts
+#             product = parse_product(lines)
+#             collection.insert_one(product) # Insert parsed product into MongoDB
+#             # print(f'{product}\n')           # for debugging
+#             lines = []  # Reset for next product
+#         else:
+#             lines.append(line)
+
+# Insert the last product if file doesn't end with an empty line
+# if lines:
+#     product = parse_product(lines)
+#     collection.insert_one(product)
     # print(f'{product}\n')            # for debugging
 
 # print count of total documents in the collection
