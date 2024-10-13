@@ -1,3 +1,6 @@
+# python script for cleaning and processing data from amazon-meta.txt file
+import pandas as pd
+
 import re
 
 with open('sample.txt', 'r') as file:
@@ -9,10 +12,10 @@ pattern = r'(\d+)\s*ASIN:\s*([\d|A-Z]+)\s*title:\s*([\d|\w|\-|\(|\)| |\|#|.|\'|:
 
 #   (\d+)\s*ASIN:\s*([\d|A-Z]+)\s*title:\s*([\d|\w|\-|\(|\)| |\'|#|0-9]+)\s*group:\s*([^\n]+)\s*salesrank:\s*(\d+)\s*similar:\s*(\d+)\s*([^\n]+)\s*categories:\s*(\d+)\n   ([\&|\||\w|\[|\]|\s|\&|\,|\-|\(|\)| |\'|\$|.]*)reviews: total: (\d)+  downloaded: (\d+)  avg rating: (\d+\.?\d*)\n([\s*\d+\-customer: A-Z rating: \d+  votes:  \d+  helpfull:   (\d+)\n]*)
 
-matches = re.findall(pattern, content)
-print(len(matches))
-for match in matches:
+iter_pattern = re.finditer(pattern, content)
 
-    id,asin,title,group,salesrank,sim_num,sim_list,cat_num,catagories,t_rev,downloads,avg_rating,reviews = match
+for match in iter_pattern:
+    print(match.groups())
+    id,asin,title,group,salesrank,sim_num,sim_list,cat_num,catagories,t_rev,downloads,avg_rating,reviews = match.groups()
     
-    print(f"id: {id}, catagories: {catagories}")
+    #print(f"id: {id}, catagories: {catagories}")
