@@ -1,0 +1,65 @@
+Count the total number of products in the collection.
+
+db.ProductMetaData.aggregate([
+  { $count: "total_products" }
+]);
+
+group by and Total the number of products in each category:
+
+db.ProductMetaData.aggregate([
+  {
+    $group: {
+      _id: "$group",
+      count: { $sum: 1 }
+    }
+  },
+  {
+    $sort: { count: -1 }  // Sort by count in descending order
+  }
+]);
+
+Counts the number of products that have no reviews.
+
+db.ProductMetaData.aggregate([
+  {
+    $match: {
+      "reviews.total": 0
+    }
+  },
+  {
+    $count: "products_with_no_reviews"
+  }
+]);
+
+count total unique categories
+
+db.ProductMetaData.aggregate([
+  { $unwind: "$categories.details" },
+  {
+    $group: {
+      _id: "$categories.details"
+    }
+  },
+  {
+    $count: "total_unique_categories" 
+  }
+]);
+
+Total count of subelements in database
+
+db.ProductMetaData.aggregate([
+  {
+    $group: {
+      _id: null,
+      total_categories: { $sum: { $size: "$categories.details" } },  // Count categories
+      total_reviews: { $sum: { $size: "$reviews.details" } }        // Count reviews
+    }
+  },
+  {
+    $project: {
+      _id: 0,
+      total_subelements: { $add: ["$total_categories", "$total_reviews"] } // Sum of all sub-elements
+    }
+  }
+]);
+
