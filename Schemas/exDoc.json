@@ -1,0 +1,39 @@
+{
+  "_id": 31,
+  "ASIN": "0895872218",
+  "title": "Backroad Buffets & Country Cafes: A Southern Guide to Meat-And-Threes & Down-Home Dining",
+  "group": "Book",
+  "salesrank": 507787,
+  "similar": {
+    "total": 3,
+    "items": [
+      [
+        "1892514656",
+        "0399151834",
+        "0767908090"
+      ]
+    ]
+  },
+  "categories": {
+    "total": 8,
+    "details": [
+      "|Books[283155]|Subjects[1000]|Business & Investing[3]|Industries & Professions[2624]|Hospitality, Travel & Tourism[2636]",
+      "|Books[283155]|Subjects[1000]|Cooking, Food & Wine[6]|General[4233]",
+      "|Books[283155]|Subjects[1000]|Cooking, Food & Wine[6]|Regional & International[4262]|U.S. Regional[4300]|South[4314]",
+      "|Books[283155]|Subjects[1000]|Travel[27]|General[17025]|Food & Lodging[17031]|Dining[17035]",
+      "|Books[283155]|Subjects[1000]|Travel[27]|United States[17227]|Regions[17228]|South[17244]|General[17248]",
+      "|[265523]|Amazon.com Stores[285080]|Travel[605012]|Categories[3074321]|Travel Books[639538]|General[640084]|Food & Lodging[640090]|Dining[640094]",
+      "|[265523]|Amazon.com Stores[285080]|Travel[605012]|Categories[3074321]|Travel Books[639538]|United States[640502]|Regions[640504]|South[640520]|General[640524]",
+      "|[265523]|Amazon.com Stores[285080]|Home & Office[764512]|Business & Investing Books[767740]|Industries & Professions[767882]|Hospitality, Travel & Tourism[767918]"
+    ]
+  },
+  "reviews": {
+    "total": 2,
+    "downloaded": 2,
+    "avg_rating": 5,
+    "details": [
+      "1998-11-10  cutomer:  AGZ20ROFY4740  rating: 5  votes:   9  helpful:   9",
+      "2001-8-30  cutomer:  AKXAJRF2AKZOH  rating: 5  votes:   5  helpful:   5"
+    ]
+  }
+}
