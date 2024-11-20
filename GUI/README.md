@@ -17,6 +17,8 @@
 2. Install Tailwind CSS and its peer dependencies:
     ```sh
     npm install -D tailwindcss postcss autoprefixer
+    npm install express mongoose cors
+
     ```
 
 3. Initialize Tailwind CSS:
