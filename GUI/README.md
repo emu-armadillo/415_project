@@ -28,6 +28,7 @@
 
 4. Start the development server:
     ```sh
+    node server.js
     npm run dev
     ```
 
