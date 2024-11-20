@@ -14,6 +14,16 @@ export default function Header() {
                 Coug Coder Co-Purchasing Recommender
               </h1>
             </div>
+
+            {/* Home Button */}
+            <div>
+              <a
+                href="/"
+                className="px-4 py-2 bg-gray-600 text-white rounded-md shadow-md hover:bg-Blue-700 transition"
+              >
+                Home
+              </a>
+            </div>
           </div>
         </nav>
       </header>
