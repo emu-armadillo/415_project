@@ -3,5 +3,13 @@
 @tailwind utilities;
 
 body {
-  background-color:gainsboro;
+  background-color: #f5f7fa;
+  color: #333;
+  font-family: 'Body Base', serif; /* Changed font to Times New Roman */
 }
+
+main {
+  padding: 2rem;
+}
+
+

@@ -1,43 +1,55 @@
+/* Header Styling */
 header {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin-top: 2rem;
-    margin-bottom: 2rem;
+  background-color: #f8f9fa; /* Light background for the header */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  display: flex;
+  align-items: center; /* Vertically center all header content */
+  justify-content: space-between; /* Space out items in the header */
+  padding: 0.5rem 1rem; /* Minimal padding */
+  height: 56px; /* Compact height */
+  position: fixed; /* Stick to the top */
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 50; /* Ensure it stays on top */
+}
+
+/* Header Title Styling */
+header h1 {
+  font-size: 1.25rem; /* Slightly smaller font for compact look */
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-align: left; /* Align title to the left */
+  text-transform: uppercase;
+  color: black; /* Change text color to black */
+  font-family: 'Arial', sans-serif; /* Consistent font */
+  margin: 0;
+  display: flex;
+  align-items: center; /* Vertically center the title with the logo */
+}
+
+/* Amazon Logo Styling (Next to Title) */
+header img {
+  object-fit: contain;
+  margin-left: 0.5rem; /* Small space between logo and title */
+  width: 2rem; /* Adjust size to be proportional to the header */
+  height: 2rem;
+}
+
+/* Paragraph Styling (if needed elsewhere) */
+.paragraph {
+  text-align: center;
+  color: #a39191;
+  margin: 0;
+}
+
+/* Media Queries */
+@media (min-width: 768px) {
+  header {
+    padding: 0.5rem 2rem; /* Slightly larger padding for desktops */
   }
-  
-  header img {
-    object-fit: contain;
-    margin-bottom: 2rem;
-    width: 11rem;
-    height: 11rem;
-  }
-  
+
   header h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    letter-spacing: 0.4em;
-    text-align: center;
-    text-transform: uppercase;
-    color: #9a3412;
-    font-family: 'Pacifico', cursive;
-    margin: 0;
+    font-size: 1.5rem; /* Larger title font for desktops */
   }
-  
-  .paragraph {
-    text-align: center;
-    color: #a39191;
-    /* color: red; */
-    margin: 0;
-  }
-  
-  @media (min-width: 768px) {
-    header {
-      margin-bottom: 4rem;
-    }
-  
-    header h1 {
-      font-size: 2.25rem;
-    }
-  }
+}
