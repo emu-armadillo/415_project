@@ -12,13 +12,11 @@
     npm install
     ```
 
-**Setting Up Tailwind CSS**
 
 2. Install Tailwind CSS and its peer dependencies:
     ```sh
     npm install -D tailwindcss postcss autoprefixer
     npm install express mongoose cors
-
     ```
 
 3. Initialize Tailwind CSS:
@@ -26,9 +24,17 @@
     npx tailwindcss init -p
     ```
 
-4. Start the development server:
+4. Start the backend:
     ```sh
     node server.js
+    ```
+    or
+    ```sh
+    npm start
+    ```
+
+5. Start the frontend:
+    ```sh
     npm run dev
     ```
 

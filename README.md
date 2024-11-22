@@ -3,6 +3,9 @@
 ## Overview
 This project analyzes Amazon's co-purchasing patterns and product metadata using big data technologies. The dataset contains information about 548,552 different products including books, music CDs, DVDs, and VHS tapes, along with their reviews and co-purchasing relationships.
 
+![Project Overview](./images/GuiSearch.png)
+![Project Overview](./images/GuiResults.png)
+
 ## Data Source
 - Dataset: Amazon Product Co-Purchasing Network Metadata
 - Source: http://snap.stanford.edu/data/amazon-meta.html
