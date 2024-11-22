@@ -11,7 +11,7 @@ export default function Header() {
             {/* Title Section */}
             <div className="flex items-center">
               <h1 className="text-lg font-bold tracking-wide uppercase md:text-xl text-black">
-                Coug Coder Co-Purchasing Recommender
+                Coug Coders Co-Purchasing Recommender
               </h1>
             </div>
 

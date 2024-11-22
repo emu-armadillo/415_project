@@ -127,10 +127,14 @@ export default function ProductGrid() {
           ))}
         </div>
 
+        {/* Divider Line */}
+        <div className="flex justify-center my-8">
+          <div className="min-w-full border-t-2 border-gray-600"></div>
+        </div>
+
         {/* Similar Items Section */}
-        {similarItems.length > 0 && (
-          <div className="mt-8">
-            <h2 className="text-2xl font-bold mb-4">Similar Items</h2>
+        <div className="mt-8">
+          <h2 className="text-2xl font-bold mb-4">Recommended Items</h2>
 
             {/* Dropdown for Similar Limit */}
             <div className="mb-4">
@@ -149,24 +153,26 @@ export default function ProductGrid() {
                 ))}
               </select>
             </div>
+          </div>
 
+          {/* Similar Items Section */}
+          {similarItems.length > 0 ? (
+          <div className="mt-8">
             {/* Similar Items Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {similarItems.slice(0, similarLimit).map((item) => (
-                <ItemCard
-                key={item.asin} // Use ASIN as the unique key
-                title={item.title} // Display the fetched title
-                asin={item.asin}
-                rating={"N/A"} // Placeholder rating
-                isSelected={false} // No highlighting for similar items
-                onClick={() => handleCardClick(item.asin)} // Allow deeper navigation
-                />
-            ))}
+              {similarItems.slice(0, similarLimit).map((item) => (
+                  <ItemCard
+                  key={item.asin} // Use ASIN as the unique key
+                  title={item.title} // Display the fetched title
+                  asin={item.asin}
+                  rating={"N/A"} // Placeholder rating
+                  isSelected={false} // No highlighting for similar items
+                  onClick={() => handleCardClick(item.asin)} // Allow deeper navigation
+                  />
+              ))}
             </div>
-
-
           </div>
-        )}
+        ) : <p className="mr-2 font-bold text-gray-700">No similar items found, select another item</p>}
       </div>
     </div>
   );
