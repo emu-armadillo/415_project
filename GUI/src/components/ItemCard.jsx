@@ -1,5 +1,4 @@
 import React from 'react';
-import amazonLogo from '/src/assets/amazonlogo.png';
 
 export default function ItemCard({ title, asin, rating, isSelected, onClick }) {
   return (
