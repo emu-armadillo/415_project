@@ -3,13 +3,15 @@ import ItemCard from "./ItemCard.jsx";
 import Header from "./Header.jsx";
 
 export default function ProductGrid() {
-  const [products, setProducts] = useState([]); // Products fetched from the backend
-  const [searchTerm, setSearchTerm] = useState(""); // Track search input
-  const [selectedAsin, setSelectedAsin] = useState(null); // Track selected ASIN
-  const [similarItems, setSimilarItems] = useState([]); // Track similar items
-  const [similarLimit, setSimilarLimit] = useState(5); // Limit for similar items
-  const [outputLimit, setOutputLimit] = useState(10); // Limit for main search results
-  const [isLoading, setIsLoading] = useState(false); // Loading state for search results
+  const [products, setProducts] = useState([]);            // Products fetched from the backend
+  const [searchTerm, setSearchTerm] = useState("");         // Track search input
+  const [selectedAsin, setSelectedAsin] = useState(null);    // Track selected ASIN
+  const [lastSelectedProduct, setLastSelectedProduct] = useState(null); // Persist the last selected product
+  const [similarItems, setSimilarItems] = useState([]);      // Track similar items
+  const [similarLimit, setSimilarLimit] = useState(5);       // Limit for similar items
+  const [outputLimit, setOutputLimit] = useState(10);        // Limit for main search results
+  const [isLoading, setIsLoading] = useState(false);         // Loading state for search results
+  const [similarLoading, setSimilarLoading] = useState(false); // Loading state for similar items
 
   // Fetch products based on search term and limit
   useEffect(() => {
@@ -25,11 +27,11 @@ export default function ProductGrid() {
         }
 
         const data = await response.json();
-        console.log("Fetched products:", data); // Debugging: Log fetched products
+        console.log("Fetched products:", data);
         setProducts(data);
-        setIsLoading(false);
       } catch (err) {
         console.error("Error fetching products:", err);
+      } finally {
         setIsLoading(false);
       }
     };
@@ -37,26 +39,23 @@ export default function ProductGrid() {
     fetchProducts();
   }, [searchTerm, outputLimit]);
 
-  
   const fetchSimilarItems = async (asin) => {
     try {
-      const response = await fetch(`http://localhost:5000/api/products/${asin}`);
+      setSimilarLoading(true);
+      const currentAsin = asin;
+
+      const response = await fetch(`http://localhost:5000/api/products/${currentAsin}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
 
       const data = await response.json();
-      console.log("Fetched similar items for ASIN:", asin, data.similar);
+      console.log("Fetched similar items for ASIN:", currentAsin, data.similar);
 
-      // data.similar now contains objects with an asin field (and possibly frequency)
-      // We need to fetch details for each similar item to get their title
-      // If titles are not needed because backend could provide them directly, you could skip this step.
-      // For now, we assume we must re-fetch each similar item’s title.
-
+      // Fetch details for each similar ASIN to get their titles
       const similarDetails = await Promise.all(
         data.similar.map(async (similarObj) => {
           const similarAsin = similarObj.asin;
-          // Re-fetch details for each similar item
           const similarResponse = await fetch(`http://localhost:5000/api/products/${similarAsin}`);
           if (similarResponse.ok) {
             const similarData = await similarResponse.json();
@@ -65,7 +64,7 @@ export default function ProductGrid() {
               title: similarData.title || `ASIN: ${similarAsin}`,
             };
           }
-          return null; // invalid or missing
+          return null;
         })
       );
 
@@ -73,13 +72,24 @@ export default function ProductGrid() {
       setSimilarItems(validSimilarItems);
     } catch (err) {
       console.error("Error fetching similar items:", err);
+      setSimilarItems([]);
+    } finally {
+      setSimilarLoading(false);
     }
   };
 
   const handleCardClick = (asin) => {
-    console.log("Selected ASIN:", asin); // Debugging
-    setSelectedAsin(asin); // Track the selected product
-    fetchSimilarItems(asin); // Fetch similar items
+    console.log("Selected ASIN:", asin);
+    setSelectedAsin(asin);
+
+    // Update lastSelectedProduct based on the product currently clicked
+    const clickedProduct = products.find(p => p.asin === asin);
+    if (clickedProduct) {
+      setLastSelectedProduct(clickedProduct);
+    }
+
+    setSimilarItems([]);
+    fetchSimilarItems(asin);
   };
 
   return (
@@ -96,6 +106,14 @@ export default function ProductGrid() {
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full max-w-md p-4 border rounded-lg shadow-md text-lg"
           />
+
+          {/* Always highlight the last selected product if one exists */}
+          {lastSelectedProduct && (
+            <div className="mt-4 p-2 border rounded-md shadow-md bg-gray-100 text-gray-700 text-center">
+              <p className="font-semibold">Last Selected Product:</p>
+              <p>{lastSelectedProduct.title} (ASIN: {lastSelectedProduct.asin})</p>
+            </div>
+          )}
         </div>
 
         {/* Results Per Page Dropdown */}
@@ -116,7 +134,7 @@ export default function ProductGrid() {
           </select>
         </div>
 
-        {/* Loading Indicator */}
+        {/* Loading Indicator for Products */}
         {isLoading && <p className="text-center text-gray-500">Loading products...</p>}
 
         {/* Product Grid */}
@@ -161,8 +179,9 @@ export default function ProductGrid() {
           </div>
         </div>
 
-        {/* Display Similar Items */}
-        {similarItems.length > 0 ? (
+        {/* Similar Items Display */}
+        {similarLoading && <p className="text-center text-gray-500">Loading recommended items...</p>}
+        {!similarLoading && similarItems.length > 0 ? (
           <div className="mt-8">
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {similarItems.slice(0, similarLimit).map((item) => (
@@ -178,9 +197,11 @@ export default function ProductGrid() {
             </div>
           </div>
         ) : (
-          <p className="mr-2 font-bold text-gray-700">
-            No similar items found, select another item
-          </p>
+          !similarLoading && (
+            <p className="mr-2 font-bold text-gray-700">
+              No similar items found, select another item
+            </p>
+          )
         )}
       </div>
     </div>

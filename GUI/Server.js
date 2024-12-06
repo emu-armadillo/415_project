@@ -29,10 +29,13 @@ const ProductSchema = new mongoose.Schema({
 const Product = mongoose.model("Product", ProductSchema, "ProductMetaData");
 
 // CleanedItemSet schema & model
-const CleanedSchema = new mongoose.Schema({
-  _id: String,
-  similar_items: [{ asin: String, frequency: Number }]
-}, { _id: false });
+const CleanedSchema = new mongoose.Schema(
+  {
+    _id: String,
+    similar_items: [{ asin: String, frequency: Number }],
+  },
+  { _id: false }
+);
 
 const CleanedItemSet = mongoose.model("CleanedItemSet", CleanedSchema, "CleanedItemSet");
 
@@ -70,14 +73,14 @@ app.get("/api/products", async (req, res) => {
 // Helper function to merge similar items from both sources
 function mergeSimilarItems(productSimilarAsins, cleanedSimilarItems) {
   // Start with product-based similar ASINs
-  const result = productSimilarAsins.map(asin => ({
+  const result = productSimilarAsins.map((asin) => ({
     asin,
-    fromProduct: true
+    fromProduct: true,
   }));
 
   // Merge cleaned set similar items
-  cleanedSimilarItems.forEach(cleanedItem => {
-    const existing = result.find(r => r.asin === cleanedItem.asin);
+  cleanedSimilarItems.forEach((cleanedItem) => {
+    const existing = result.find((r) => r.asin === cleanedItem.asin);
     if (existing) {
       existing.frequency = cleanedItem.frequency;
       existing.fromCleaned = true;
@@ -85,7 +88,7 @@ function mergeSimilarItems(productSimilarAsins, cleanedSimilarItems) {
       result.push({
         asin: cleanedItem.asin,
         frequency: cleanedItem.frequency,
-        fromCleaned: true
+        fromCleaned: true,
       });
     }
   });
@@ -101,22 +104,20 @@ app.get("/api/products/:asin", async (req, res) => {
     // Fetch product and cleaned set in parallel
     const [product, cleanedSet] = await Promise.all([
       Product.findOne({ ASIN: asin }).select("ASIN title similar.items reviews.avg_rating"),
-      CleanedItemSet.findOne({ _id: asin }).select("similar_items")
+      CleanedItemSet.findOne({ _id: asin }).select("similar_items"),
     ]);
 
-    // Validate existence
+    // If the product is not found, return a 404
     if (!product) {
       return res.status(404).json({ error: "Product not found in ProductMetaData." });
     }
-    if (!cleanedSet) {
-      return res.status(404).json({ error: "No cleaned data found for this product." });
-    }
 
-    // Merge similar items
-    const combinedSimilar = mergeSimilarItems(
-      product.similar?.items || [],
-      cleanedSet.similar_items || []
-    );
+    // If cleanedSet is not found, we just use the product’s similar items
+    const productSimilarAsins = product.similar?.items || [];
+    const cleanedSimilarItems = cleanedSet?.similar_items || [];
+
+    // Merge similar items from both sets
+    const combinedSimilar = mergeSimilarItems(productSimilarAsins, cleanedSimilarItems);
 
     res.json({
       asin: product.ASIN,
