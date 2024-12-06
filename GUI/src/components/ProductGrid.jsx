@@ -17,7 +17,7 @@ export default function ProductGrid() {
       try {
         setIsLoading(true);
         const response = await fetch(
-          `http://localhost:5000/api/products?search=${searchTerm}&limit=${outputLimit}`
+          `http://localhost:5000/api/products?search=${encodeURIComponent(searchTerm)}&limit=${outputLimit}`
         );
 
         if (!response.ok) {
@@ -35,40 +35,46 @@ export default function ProductGrid() {
     };
 
     fetchProducts();
-  }, [searchTerm, outputLimit]); // Refetch when searchTerm or outputLimit changes
+  }, [searchTerm, outputLimit]);
 
+  
   const fetchSimilarItems = async (asin) => {
     try {
       const response = await fetch(`http://localhost:5000/api/products/${asin}`);
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-  
+
       const data = await response.json();
-      console.log("Fetched similar items for ASIN:", asin, data.similar); // Debugging
-  
-      // Fetch details for similar items and filter out any missing products
+      console.log("Fetched similar items for ASIN:", asin, data.similar);
+
+      // data.similar now contains objects with an asin field (and possibly frequency)
+      // We need to fetch details for each similar item to get their title
+      // If titles are not needed because backend could provide them directly, you could skip this step.
+      // For now, we assume we must re-fetch each similar item’s title.
+
       const similarDetails = await Promise.all(
-        data.similar.map(async (similarAsin) => {
+        data.similar.map(async (similarObj) => {
+          const similarAsin = similarObj.asin;
+          // Re-fetch details for each similar item
           const similarResponse = await fetch(`http://localhost:5000/api/products/${similarAsin}`);
           if (similarResponse.ok) {
             const similarData = await similarResponse.json();
-            return { asin: similarAsin, title: similarData.title || `ASIN: ${similarAsin}` };
+            return {
+              asin: similarAsin,
+              title: similarData.title || `ASIN: ${similarAsin}`,
+            };
           }
-          return null; // Return null for invalid or missing similar items
+          return null; // invalid or missing
         })
       );
-  
-      // Filter out the null entries
+
       const validSimilarItems = similarDetails.filter(item => item !== null);
-  
-      setSimilarItems(validSimilarItems); // Only set valid similar items
+      setSimilarItems(validSimilarItems);
     } catch (err) {
       console.error("Error fetching similar items:", err);
     }
   };
-  
-  
 
   const handleCardClick = (asin) => {
     console.log("Selected ASIN:", asin); // Debugging
@@ -117,12 +123,12 @@ export default function ProductGrid() {
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
           {products.slice(0, outputLimit).map((product) => (
             <ItemCard
-              key={product.asin} // Unique key for each card
+              key={product.asin}
               title={product.title}
               asin={product.asin}
               rating={product.rating}
-              isSelected={product.asin === selectedAsin} // Highlight the selected product
-              onClick={() => handleCardClick(product.asin)} // Handle card click
+              isSelected={product.asin === selectedAsin}
+              onClick={() => handleCardClick(product.asin)}
             />
           ))}
         </div>
@@ -136,43 +142,46 @@ export default function ProductGrid() {
         <div className="mt-8">
           <h2 className="text-2xl font-bold mb-4">Recommended Items</h2>
 
-            {/* Dropdown for Similar Limit */}
-            <div className="mb-4">
-              <label className="mr-2 text-gray-700 font-semibold">
-                Show up to:
-              </label>
-              <select
-                value={similarLimit}
-                onChange={(e) => setSimilarLimit(Number(e.target.value))}
-                className="p-2 border rounded-md shadow-md"
-              >
-                {[5, 10, 15, 20].map((limit) => (
-                  <option key={limit} value={limit}>
-                    {limit}
-                  </option>
-                ))}
-              </select>
-            </div>
+          {/* Dropdown for Similar Limit */}
+          <div className="mb-4">
+            <label className="mr-2 text-gray-700 font-semibold">
+              Show up to:
+            </label>
+            <select
+              value={similarLimit}
+              onChange={(e) => setSimilarLimit(Number(e.target.value))}
+              className="p-2 border rounded-md shadow-md"
+            >
+              {[5, 10, 15, 20].map((limit) => (
+                <option key={limit} value={limit}>
+                  {limit}
+                </option>
+              ))}
+            </select>
           </div>
+        </div>
 
-          {/* Similar Items Section */}
-          {similarItems.length > 0 ? (
+        {/* Display Similar Items */}
+        {similarItems.length > 0 ? (
           <div className="mt-8">
-            {/* Similar Items Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
               {similarItems.slice(0, similarLimit).map((item) => (
-                  <ItemCard
-                  key={item.asin} // Use ASIN as the unique key
-                  title={item.title} // Display the fetched title
+                <ItemCard
+                  key={item.asin}
+                  title={item.title}
                   asin={item.asin}
                   rating={"N/A"} // Placeholder rating
-                  isSelected={false} // No highlighting for similar items
-                  onClick={() => handleCardClick(item.asin)} // Allow deeper navigation
-                  />
+                  isSelected={false}
+                  onClick={() => handleCardClick(item.asin)}
+                />
               ))}
             </div>
           </div>
-        ) : <p className="mr-2 font-bold text-gray-700">No similar items found, select another item</p>}
+        ) : (
+          <p className="mr-2 font-bold text-gray-700">
+            No similar items found, select another item
+          </p>
+        )}
       </div>
     </div>
   );

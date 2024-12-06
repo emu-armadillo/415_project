@@ -8,14 +8,23 @@
     "total": "Int32",
     "items": [
       [
-        "Array of Strings"
+        "String",
+        "String",
+        "String"
       ]
     ]
   },
   "categories": {
     "total": "Int32",
     "details": [
-      "Array of Strings"
+      "String",
+      "String",
+      "String",
+      "String",
+      "String",
+      "String",
+      "String",
+      "String"
     ]
   },
   "reviews": {
@@ -23,7 +32,8 @@
     "downloaded": "Int32",
     "avg_rating": "Double",
     "details": [
-      "Array of Strings"
+      "String",
+      "String"
     ]
   }
 }
